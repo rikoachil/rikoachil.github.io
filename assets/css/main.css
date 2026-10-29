@@ -888,6 +888,15 @@ section,
   line-height: 0;
 }
 
+.interests .features-item img,
+.interests .features-item .features-icon {
+  width: 32px;
+  height: 32px;
+  margin-right: 12px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
 .interests .features-item h3 {
   font-weight: 700;
   margin: 0;
