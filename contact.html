@@ -117,7 +117,7 @@
               <i class="icon bi bi-envelope flex-shrink-0"></i>
               <div>
                 <h3>Email</h3>
-                <p>rikojpr7@gmail.com</p>
+                <p><a href="mailto:rikojpr7@gmail.com" style="color: inherit;">rikojpr7@gmail.com</a></p>
               </div>
             </div>
           </div><!-- End Info Item -->
@@ -130,7 +130,7 @@
                 <div class="social-links">
                   <a href="#"><i class="bi bi-facebook"></i></a>
                   <a href="#"><i class="bi bi-instagram"></i></a>
-                  <a href="#"><i class="bi bi-WhatsApp"></i></a>
+                  <a href="https://wa.me/628976398024" target="_blank" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
                 </div>
               </div>
             </div>
@@ -138,7 +138,7 @@
 
         </div>
 
-        <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="600">
+        <form action="#" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="600">
           <div class="row gy-4">
 
             <div class="col-md-6">
@@ -158,11 +158,18 @@
             </div>
 
             <div class="col-md-12 text-center">
-              <div class="loading">Loading</div>
+              <div class="loading">Memproses pesan...</div>
               <div class="error-message"></div>
-              <div class="sent-message">Your message has been sent. Thank you!</div>
+              <div class="sent-message">Pesan Anda berhasil dikirim! Terima kasih telah menghubungi saya.</div>
 
-              <button type="submit">Kirim Pesan</button>
+              <div class="d-flex justify-content-center gap-3 flex-wrap mt-2">
+                <button type="submit" id="btn-wa">
+                  <i class="bi bi-whatsapp me-1"></i> Kirim Pesan (WhatsApp)
+                </button>
+                <button type="button" id="btn-email" class="btn-email-action">
+                  <i class="bi bi-envelope me-1"></i> Kirim via Email
+                </button>
+              </div>
             </div>
 
           </div>

@@ -1,85 +1,103 @@
 /**
-* PHP Email Form Validation - v3.11
-* URL: https://bootstrapmade.com/php-email-form/
-* Author: BootstrapMade.com
+* Contact Form Handler - WhatsApp & Email Integration
+* Developed for Personal Portfolio
 */
 (function () {
   "use strict";
 
   let forms = document.querySelectorAll('.php-email-form');
 
-  forms.forEach( function(e) {
+  forms.forEach(function(e) {
     e.addEventListener('submit', function(event) {
       event.preventDefault();
-
-      let thisForm = this;
-
-      let action = thisForm.getAttribute('action');
-      let recaptcha = thisForm.getAttribute('data-recaptcha-site-key');
-      
-      if( ! action ) {
-        displayError(thisForm, 'The form action property is not set!');
-        return;
-      }
-      thisForm.querySelector('.loading').classList.add('d-block');
-      thisForm.querySelector('.error-message').classList.remove('d-block');
-      thisForm.querySelector('.sent-message').classList.remove('d-block');
-
-      let formData = new FormData( thisForm );
-
-      if ( recaptcha ) {
-        if(typeof grecaptcha !== "undefined" ) {
-          grecaptcha.ready(function() {
-            try {
-              grecaptcha.execute(recaptcha, {action: 'php_email_form_submit'})
-              .then(token => {
-                formData.set('recaptcha-response', token);
-                php_email_form_submit(thisForm, action, formData);
-              })
-            } catch(error) {
-              displayError(thisForm, error);
-            }
-          });
-        } else {
-          displayError(thisForm, 'The reCaptcha javascript API url is not loaded!')
-        }
-      } else {
-        php_email_form_submit(thisForm, action, formData);
-      }
+      handleFormSubmit(this, 'whatsapp');
     });
+
+    let btnEmail = e.querySelector('#btn-email');
+    if (btnEmail) {
+      btnEmail.addEventListener('click', function(event) {
+        event.preventDefault();
+        handleFormSubmit(e, 'email');
+      });
+    }
   });
 
-  function php_email_form_submit(thisForm, action, formData) {
-    fetch(action, {
-      method: 'POST',
-      body: formData,
-      headers: {'X-Requested-With': 'XMLHttpRequest'}
-    })
-    .then(response => {
-      if( response.ok ) {
-        return response.text();
+  function handleFormSubmit(thisForm, method) {
+    let nameInput = thisForm.querySelector('input[name="name"]');
+    let emailInput = thisForm.querySelector('input[name="email"]');
+    let subjectInput = thisForm.querySelector('input[name="subject"]');
+    let messageInput = thisForm.querySelector('textarea[name="message"]');
+
+    let name = nameInput ? nameInput.value.trim() : '';
+    let email = emailInput ? emailInput.value.trim() : '';
+    let subject = subjectInput ? subjectInput.value.trim() : '';
+    let message = messageInput ? messageInput.value.trim() : '';
+
+    if (!name || !email || !subject || !message) {
+      displayError(thisForm, 'Harap lengkapi semua kolom formulir.');
+      return;
+    }
+
+    let loading = thisForm.querySelector('.loading');
+    let errorMessage = thisForm.querySelector('.error-message');
+    let sentMessage = thisForm.querySelector('.sent-message');
+
+    if (loading) {
+      loading.innerHTML = 'Memproses pesan...';
+      loading.classList.add('d-block');
+    }
+    if (errorMessage) errorMessage.classList.remove('d-block');
+    if (sentMessage) sentMessage.classList.remove('d-block');
+
+    const phone = '628976398024';
+    const targetEmail = 'rikojpr7@gmail.com';
+
+    setTimeout(function() {
+      if (loading) loading.classList.remove('d-block');
+
+      if (method === 'email') {
+        const mailtoSubject = encodeURIComponent(`${subject} - dari ${name}`);
+        const mailtoBody = encodeURIComponent(`Halo Riko,\n\nNama: ${name}\nEmail: ${email}\nSubjek: ${subject}\n\nPesan:\n${message}\n`);
+        const mailtoUrl = `mailto:${targetEmail}?subject=${mailtoSubject}&body=${mailtoBody}`;
+
+        window.location.href = mailtoUrl;
+
+        if (sentMessage) {
+          sentMessage.innerHTML = 'Membuka aplikasi email... Pesan berhasil disiapkan untuk dikirim ke <strong>' + targetEmail + '</strong>. Terima kasih!';
+          sentMessage.classList.add('d-block');
+        }
       } else {
-        throw new Error(`${response.status} ${response.statusText} ${response.url}`); 
+        // WhatsApp
+        const waText = encodeURIComponent(
+          `*Pesan Baru dari Portofolio*\n` +
+          `----------------------------------\n` +
+          `*Nama:* ${name}\n` +
+          `*Email:* ${email}\n` +
+          `*Subjek:* ${subject}\n\n` +
+          `*Pesan:*\n${message}`
+        );
+        const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${waText}`;
+
+        window.open(waUrl, '_blank');
+
+        if (sentMessage) {
+          sentMessage.innerHTML = 'Pesan Anda berhasil disiapkan dan diteruskan ke WhatsApp! Terima kasih telah menghubungi saya.';
+          sentMessage.classList.add('d-block');
+        }
       }
-    })
-    .then(data => {
-      thisForm.querySelector('.loading').classList.remove('d-block');
-      if (data.trim() == 'OK') {
-        thisForm.querySelector('.sent-message').classList.add('d-block');
-        thisForm.reset(); 
-      } else {
-        throw new Error(data ? data : 'Form submission failed and no error message returned from: ' + action); 
-      }
-    })
-    .catch((error) => {
-      displayError(thisForm, error);
-    });
+
+      thisForm.reset();
+    }, 400);
   }
 
   function displayError(thisForm, error) {
-    thisForm.querySelector('.loading').classList.remove('d-block');
-    thisForm.querySelector('.error-message').innerHTML = error;
-    thisForm.querySelector('.error-message').classList.add('d-block');
+    let loading = thisForm.querySelector('.loading');
+    let errorMessage = thisForm.querySelector('.error-message');
+    if (loading) loading.classList.remove('d-block');
+    if (errorMessage) {
+      errorMessage.innerHTML = error;
+      errorMessage.classList.add('d-block');
+    }
   }
 
 })();
